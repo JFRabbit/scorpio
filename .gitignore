@@ -1,0 +1,8 @@
+# Ignore
+.idea/
+logfile/
+__pycache__/
+config/
+*.log
+pp/
+tmp/
