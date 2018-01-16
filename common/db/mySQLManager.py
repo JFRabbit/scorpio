@@ -21,7 +21,7 @@ class MySQLManager(object):
 
         try:
             config = MYSQL_CONFIG
-            self.log.info("Connect DataBase:[%s]...") % config[connection_name][DB]
+            self.log.info("Connect DataBase:[%s]..." % config[connection_name][DB])
             self.__connect = MySQLdb.connect(
                 host=config[connection_name][HOST],
                 port=config[connection_name][PORT],
@@ -52,7 +52,7 @@ class MySQLManager(object):
 
     def execute(self, sql):
         """执行SQL"""
-        self.log.info("Execute sql: %s") % sql
+        self.log.info("Execute sql: %s" % sql)
         self.__cursor.execute(sql)
 
     def find(self, sql, find_all=True):
@@ -60,7 +60,7 @@ class MySQLManager(object):
             如果all = True 返回所有数据
             否则只返回第一条数据
         """
-        self.log.info("Execute query sql: %s") % sql
+        self.log.info("Execute query sql: %s" % sql)
         self.execute(sql)
         if find_all:
             return self.__cursor.fetchall()
@@ -71,7 +71,7 @@ class MySQLManager(object):
             可适用于增、删、改
         """
         try:
-            self.log.info("Execute change: %s") % sql
+            self.log.info("Execute change: %s" % sql)
             num = self.__cursor.execute(sql)
             self.__connect.commit()
             return num
@@ -93,7 +93,7 @@ def sql_result_2_dict(select_items: tuple, result_items: tuple):
         for j in select_items:
             obj[j] = result_items[0][select_items.index(j)]
 
-        print(json_format(obj))
+        test_manager.log.info(json_format(obj))
         return obj
 
     result = []
@@ -104,7 +104,7 @@ def sql_result_2_dict(select_items: tuple, result_items: tuple):
 
         result.append(obj)
 
-    print(json_format(result))
+    test_manager.log.info(json_format(result))
     return result
 
 
@@ -118,26 +118,32 @@ def dict_2_class(data: dict, target_class: object):
 
 
 if __name__ == '__main__':
-    help(MySQLManager)
+    import time
+
     test_manager = MySQLManager("local")
+    time.sleep(1)
 
     sql_find = 'SELECT * FROM foo'
-    print(test_manager.find(sql_find))
-    print(test_manager.find(sql_find, False))
+    test_manager.log.info(test_manager.find(sql_find))
+    test_manager.log.info(test_manager.find(sql_find, False))
+    time.sleep(1)
 
     sql_insert = "INSERT INTO foo(foo_name) VALUE('Tom')"
-    print(test_manager.change(sql_insert))
-    print(test_manager.find(sql_find))
+    test_manager.log.info(test_manager.change(sql_insert))
+    test_manager.log.info(test_manager.find(sql_find))
+    time.sleep(1)
 
     test_data = test_manager.find(sql_find)  # type: tuple
     effect_num = test_data[-1][0]
 
     sql_update = "update foo set foo_name = 'Marry' where foo_id = '%d'" % effect_num
-    print(test_manager.change(sql_update))
-    print(test_manager.find(sql_find))
+    test_manager.log.info(test_manager.change(sql_update))
+    test_manager.log.info(test_manager.find(sql_find))
+    time.sleep(1)
 
     sql_delete = "delete from foo where foo_id='%d'" % effect_num
-    print(test_manager.change(sql_delete))
-    print(test_manager.find(sql_find))
+    test_manager.log.info(test_manager.change(sql_delete))
+    test_manager.log.info(test_manager.find(sql_find))
+    time.sleep(1)
 
     test_manager.close()
