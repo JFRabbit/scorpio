@@ -15,17 +15,17 @@ def __set_level(config):
         return logging.ERROR
 
 
-# file
-_filehandler = logging.FileHandler(filename=LOG["file"]["path"], encoding="utf-8")
-_filehandler.setLevel(__set_level(LOG["file"]["level"]))
-_fmter = logging.Formatter(fmt=LOG["fommat"], datefmt=LOG["datefmt"])
-_filehandler.setFormatter(_fmter)
-
 # console
 _console = logging.StreamHandler()
 _console.setLevel(__set_level(LOG["console"]["level"]))
-_formatter = logging.Formatter(LOG["fommat"])
+_formatter = logging.Formatter(fmt=LOG["console"]["fommat"], datefmt=LOG["console"]["datefmt"])
 _console.setFormatter(_formatter)
+
+# file
+_filehandler = logging.FileHandler(filename=LOG["file"]["path"], encoding="utf-8")
+_filehandler.setLevel(__set_level(LOG["file"]["level"]))
+_fmter = logging.Formatter(fmt=LOG["file"]["fommat"], datefmt=LOG["file"]["datefmt"])
+_filehandler.setFormatter(_fmter)
 
 
 class BaseLog(object):
@@ -44,3 +44,9 @@ if __name__ == '__main__':
     log.info("this is a format: %s %s", "hello", "world")
 
     log.info("this is info msg 爱爱爱")
+    try:
+        raise Exception("aaa")
+    except Exception  as e:
+        log.exception("Exception happened")
+
+    print("end")
