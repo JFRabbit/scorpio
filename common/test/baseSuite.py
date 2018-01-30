@@ -1,3 +1,5 @@
+import time
+
 from common.test import *
 
 
@@ -7,9 +9,7 @@ class BaseSuite(object):
         self.log = BaseLog(BaseSuite.__name__).log
 
     def run(self):
-        print(1)
         self.log.info("\n\n Test Start \n ------------------------------------------------------------> ")
-        print(2)
 
         suite = unittest.TestSuite()
         for case, is_run in self.run_classes.items():
@@ -23,5 +23,12 @@ class BaseSuite(object):
             else:
                 raise Exception("Wrong Arguments! 0:not run, 1:run")
 
-        unittest.TextTestRunner().run(suite)
+        result = unittest.TextTestRunner().run(suite)  # type: unittest.runner.TextTestResult
+        time.sleep(0.5)
+        self.log.info("\n ==============================================================")
+        self.log.info("%s" % result)
+        for error in result.errors:
+            self.log.error(error[0])
+            for msg in error[1:]:
+                self.log.error("\n%s" % msg)
         self.log.info("\n\n <------------------------------------------------------------ \nTest End\n\n\n ")
