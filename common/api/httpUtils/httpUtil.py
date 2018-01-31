@@ -1,7 +1,8 @@
-import requests
-from config.env_interface import *
-from common.interface.httpUtils.httpMethod import HttpMethod
-from common.interface.jsonCompare.compare import *
+from config.env_api import *
+from common.api.httpUtils.httpMethod import HttpMethod
+from common.api.jsonCompare.compare import *
+
+log = BaseLog("httpUtil").log
 
 
 class RequestItems(object):
@@ -44,16 +45,24 @@ def __ignore_urllib3_warning():
     urllib3.disable_warnings()
 
 
-def do_request(items: RequestItems):
+def do_request(items: RequestItems, user_token=None, pwd_token=None):
     # 忽略 warning
     if http_variable[IGNORE_WARN]:
         __ignore_urllib3_warning()
-
+        log.info("IGNORE_WARN")
     session = requests.session()
 
     # cas 认证
     if env_variable[CAS]:
+        log.info("open CAS")
         session = __verify_cas()
+
+    if env_variable[TOKEN]:
+        log.info("login by token")
+        if user_token is None or pwd_token is None:
+            raise Exception("Token must inter user and pwd!")
+        headers = get_token_headers(user_token, pwd_token)
+        session.headers = headers
 
     try:
         methods = {
@@ -69,5 +78,6 @@ def do_request(items: RequestItems):
         response = methods[items.method]
         res_items = ResponseItems(response)
     finally:
+        log.info("Close session%s" % session)
         session.close()
     return res_items

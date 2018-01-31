@@ -1,12 +1,12 @@
 import re
 import datetime
 
-from common.interface import *
-from common.interface.jsonCompare.data import *
-from common.interface.jsonCompare.compareConstant import *
-from common.interface.jsonCompare.compareData import *
-from common.interface.jsonCompare.compareError import *
-from common.interface.jsonCompare.ruleEnum import *
+from common.api import *
+from common.api.jsonCompare.data import *
+from common.api.jsonCompare.compareConstant import *
+from common.api.jsonCompare.compareData import *
+from common.api.jsonCompare.compareError import *
+from common.api.jsonCompare.ruleEnum import *
 
 
 class Comparator(object):

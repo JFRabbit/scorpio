@@ -1,4 +1,4 @@
-from common.interface.httpUtils.httpMethod import HttpMethod
+from common.api.httpUtils.httpMethod import HttpMethod
 
 
 class BaseRequest(object):

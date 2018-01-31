@@ -1,5 +1,5 @@
-from common.interface.httpUtils.httpUtil import *
-from common.interface.jsonCompare.compare import CompareData, Comparator
+from common.api.httpUtils.httpUtil import *
+from common.api.jsonCompare.compare import CompareData, Comparator
 
 
 class InterfaceTestBase(object):
