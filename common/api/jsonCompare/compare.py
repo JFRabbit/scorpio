@@ -35,10 +35,12 @@ class Comparator(object):
         else:
             self.__rule_dict[key] = rule + regex
 
-    def compare(self, expect: CompareData, actual: CompareData):
+    def compare(self, expect, actual, is_check_one=False):
         """
+        比较字典 expect和actual必须为CompareData或者CompareDataList的实例对象
         :param expect: 预期
         :param actual: 实际
+        :param is_check_one: 列表是否仅检查第一项
         :return: True False
         """
 
@@ -52,7 +54,14 @@ class Comparator(object):
                 CompareError(self.__path, RESPONSE_CODE_DIFF, self.__set_error_msg(expect.code, actual.code)))
             return self
 
-        self.__compare_json(expect.data, actual.data)
+        if isinstance(expect, CompareData):
+            self.__compare_json(expect.data, actual.data, is_check_one)
+
+        elif isinstance(expect, CompareDataList):
+            self.__compare_list(self.__path, expect.data, actual.data, is_check_one)
+
+        else:
+            raise Exception("Only support class compare: CompareData, CompareDataList")
 
         if len(self.error_msg) != 0:
             self.is_same = False
@@ -60,14 +69,14 @@ class Comparator(object):
 
         return self
 
-    def __compare_json(self, expect: dict, actual: dict):
+    def __compare_json(self, expect: dict, actual: dict, is_check_one):
 
         # 对比json object
-        self.__compare_obj(PATH_ROOT, expect, actual)
+        self.__compare_obj(PATH_ROOT, expect, actual, is_check_one)
 
         pass
 
-    def __compare_obj(self, key: str, expect: dict, actual: dict):
+    def __compare_obj(self, key: str, expect: dict, actual: dict, is_check_one):
         if self.__rule_dict.get(key) == Rule.IGNORE_VALUE or self.__rule_dict.get(key) == Rule.IS_JSON_OBJECT:
             return
 
@@ -100,33 +109,36 @@ class Comparator(object):
                 continue
 
             if isinstance(v, dict):
-                self.__compare_obj(k, v, actual.get(k))
+                self.__compare_obj(k, v, actual.get(k), is_check_one)
                 continue
 
             if isinstance(v, list):
                 self.__path += PATH_ARRAY + "[%s]" % k
-                self.__compare_list(k, v, actual.get(k))
+                self.__compare_list(k, v, actual.get(k), is_check_one)
                 continue
 
         pass
 
-    def __compare_list(self, key: str, expect: list, actual: list, is_check_one=False):
+    def __compare_list(self, key: str, expect: list, actual: list, is_check_one):
         if self.__rule_dict.get(key) == Rule.IS_JSON_ARRAY or self.__rule_dict.get(key) == Rule.IGNORE_VALUE:
             return
 
         # key += PATH_ROOT
 
         if is_check_one or self.__rule_dict.get(key) == Rule.IGNORE_ARRAY_SIZE:
+            if len(expect) == 0 or len(actual) == 0:
+                raise Exception("length must > 0 when check one of List")
+
             self.__path += "[0]"
             i = expect[0]
             if isinstance(i, dict):
                 key += SUB_OBJ
-                self.__compare_obj(key, i, actual[0])
+                self.__compare_obj(key, i, actual[0], is_check_one)
                 return
 
             if isinstance(i, list):
                 self.__path += PATH_ARRAY
-                self.__compare_list(key, i, actual[0])
+                self.__compare_list(key, i, actual[0], is_check_one)
                 return
 
         else:
@@ -142,12 +154,12 @@ class Comparator(object):
 
             if isinstance(i, dict):
                 key += SUB_OBJ
-                self.__compare_obj(key, i, actual[expect.index(i)])
+                self.__compare_obj(key, i, actual[expect.index(i)], is_check_one)
                 continue
 
             if isinstance(i, list):
                 self.__path += PATH_ARRAY
-                self.__compare_list(key, i, actual[expect.index(i)])
+                self.__compare_list(key, i, actual[expect.index(i)], is_check_one)
                 continue
 
         pass
