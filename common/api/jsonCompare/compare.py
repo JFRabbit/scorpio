@@ -101,7 +101,7 @@ class Comparator(object):
             self.__path = current_path
 
             if self.__is_primitive(v):
-                if self.__compare_primitive(v, actual.get(k), self.__rule_dict.get(k)):
+                if self.__compare_primitive(v, actual.get(k)):
                     pass
                 else:
                     self.__path += "[%d][%s]" % (index, k)
@@ -165,7 +165,7 @@ class Comparator(object):
         pass
 
     @staticmethod
-    def __compare_primitive(expect, actual, regex):
+    def __compare_primitive(expect, actual):
         if expect == Rule.IS_JSON_PRIMITIVE.value or expect == Rule.IGNORE_VALUE.value:
             return True
 
