@@ -1,7 +1,5 @@
 # coding: utf-8
-from common import PROJECT_PATH
 
-DB_CONFIG_PATH = PROJECT_PATH + '/config/db.yaml'
 
 MYSQL = 'mysql'
 HOST = 'host'
@@ -14,4 +12,4 @@ CHARSET = 'charset'
 MONGO = 'mongo'
 
 if __name__ == "__main__":
-    print(DB_CONFIG_PATH)
+    pass

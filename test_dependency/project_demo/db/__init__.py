@@ -1,2 +1,2 @@
 from test_dependency import *
-from common.db.mySQLManager import *
+from common.db.dbManager import *

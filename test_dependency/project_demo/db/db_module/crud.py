@@ -7,12 +7,12 @@ from test_dependency.project_demo.db import *
 
 def create(manager: MySQLManager):
     sql = ""
-    return manager.change(sql)
+    return manager.execute(sql)
 
 
 def update(manager: MySQLManager):
     sql = ""
-    return manager.change(sql)
+    return manager.execute(sql)
 
 
 def retrieve(manager: MySQLManager):
@@ -22,4 +22,4 @@ def retrieve(manager: MySQLManager):
 
 def delete(manager: MySQLManager):
     sql = ""
-    return manager.change(sql)
+    return manager.execute(sql)
