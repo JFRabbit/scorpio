@@ -9,7 +9,7 @@ from common.util.jsonFormat import *
 
 
 class MySQLManager(object):
-    """数据库操作类"""
+    """数据库操作类 pip install mysqlclient """
 
     def __init__(self, connection_name: str):
         self.log = BaseLog(MySQLManager.__name__).log
