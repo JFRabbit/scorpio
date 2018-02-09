@@ -40,3 +40,7 @@ class BaseAction(object):
         element = self.find_element(*loc)
         self.log.info("send value: %s to element: %s", value, loc)
         element.send_keys(value)
+
+    def chains(self):
+        from selenium.webdriver.common.action_chains import ActionChains
+        return ActionChains(self.driver)
