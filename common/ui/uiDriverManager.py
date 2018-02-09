@@ -5,11 +5,13 @@ from common.ui import *
 class UIDriverManager(object):
     def __init__(self):
         self.log = BaseLog(UIDriverManager.__name__).log
-        self.__driver = self.__init_driver(DRIVER["type"])
+        self.__driver = self.__init_driver(DRIVER["type"])  # type: DRIVER["type"]
         if self.__driver is None:
             raise Exception("Driver init failed, Driver is None!")
 
         self.log.info("<<< init done ")
+        self.__windows = {}
+        self.__current_window = {}
 
     def get_driver(self):
         return self.__driver
@@ -54,6 +56,27 @@ class UIDriverManager(object):
             return self.__set_basic_web_property(driver)
         else:
             raise Exception("unimplemented driver type")
+
+    def add_window(self, window_name: str):
+        windows = self.__driver.window_handles  # type:list
+        if len(windows) - len(self.__windows) == 1:
+            for i in windows:
+                if i not in self.__windows.values():
+                    self.__windows[window_name] = i
+        else:
+            raise Exception("Windows must add one by one")
+
+        if len(self.__windows) == 1:
+            self.__current_window.clear()
+            self.__current_window[window_name] = self.__windows[window_name]
+
+    def switch_to_window(self, window_name: str):
+        self.__current_window.clear()
+        self.__current_window[window_name] = self.__windows[window_name]
+        return self.__driver.switch_to_window(self.__windows[window_name])
+
+    def current_window(self):
+        return self.__current_window
 
 
 if __name__ == "__main__":
