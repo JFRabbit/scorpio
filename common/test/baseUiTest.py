@@ -10,4 +10,4 @@ class UITestBase(unittest.TestCase):
         self.log = BaseLog(UITestBase.__name__).log
 
     def tearDown(self):
-        self.manager.close(self.driver)
+        self.manager.close()

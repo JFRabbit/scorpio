@@ -5,24 +5,20 @@ from common.ui import *
 class UIDriverManager(object):
     def __init__(self):
         self.log = BaseLog(UIDriverManager.__name__).log
-
-    def get_driver(self):
-        """get WebDriver"""
-        self.log.info(">>> init driver ")
-
-        driver = self.__init_driver(DRIVER["type"])
-
-        if driver is None:
+        self.__driver = self.__init_driver(DRIVER["type"])
+        if self.__driver is None:
             raise Exception("Driver init failed, Driver is None!")
 
         self.log.info("<<< init done ")
-        return driver
 
-    def close(self, driver):
+    def get_driver(self):
+        return self.__driver
+
+    def close(self):
         """close WebDriver"""
-        self.log.info("close driver: %s", driver)
-        if driver is not None:
-            driver.quit()
+        self.log.info("close driver: %s", self.__driver)
+        if self.__driver is not None:
+            self.__driver.quit()
 
     def __set_basic_web_property(self, driver):
         self.log.info("__WINDOW: max")
@@ -34,6 +30,7 @@ class UIDriverManager(object):
         return driver
 
     def __init_driver(self, driver_type):
+        self.log.info(">>> init driver ")
         if driver_type == webdriver.Chrome:
             self.log.info("Create Chrome Driver...")
             options = webdriver.ChromeOptions()
@@ -67,4 +64,4 @@ if __name__ == "__main__":
 
     time.sleep(1)
 
-    manager.close(test_driver)
+    manager.close()
