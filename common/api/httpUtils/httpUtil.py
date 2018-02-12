@@ -60,9 +60,10 @@ def do_request(items: RequestItems, user_token=None, pwd_token=None):
     if env_variable[TOKEN]:
         log.info("login by token")
         if user_token is None or pwd_token is None:
-            raise Exception("Token must inter user and pwd!")
-        headers = get_token_headers(user_token, pwd_token)
-        session.headers = headers
+            log.warning("Token must inter user and pwd!")
+        else:
+            headers = get_token_headers(user_token, pwd_token)
+            session.headers = headers
 
     try:
         methods = {
