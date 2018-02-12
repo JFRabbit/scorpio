@@ -28,6 +28,7 @@ class ResponseItems(object):
         except json.decoder.JSONDecodeError as e:
             self.log.error("json.decoder.JSONDecodeError: %s" % e)
             self.json = response.text
+            self.log.warning(self.json)
 
     def __str__(self):
         return "ResponseItems: [url:%s, status:%d, json:%s]" % \

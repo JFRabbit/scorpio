@@ -53,6 +53,8 @@ class Comparator(object):
             self.__set_error(
                 CompareError(self.__path, RESPONSE_CODE_DIFF, self.__set_error_msg(expect.code, actual.code)))
             return self
+        elif RESPONSE_CODE in self.__rule_dict and self.__rule_dict[RESPONSE_CODE] == Rule.ONLY_CHECK_CODE:
+            return self
 
         if isinstance(expect, CompareData):
             self.__compare_json(expect.data, actual.data, is_check_one)

@@ -2,9 +2,9 @@ from common.api.httpUtils.httpUtil import *
 from common.api.jsonCompare.compare import CompareData, Comparator
 
 
-class InterfaceTestBase(object):
+class ApiTestBase(object):
     def __init__(self):
-        self.log = BaseLog(InterfaceTestBase.__name__).log
+        self.log = BaseLog(ApiTestBase.__name__).log
         self.res = None  # type: ResponseItems
 
     def do_compare(self, request_items: RequestItems, expect_code: int, expect_json: dict, comparator=None):
