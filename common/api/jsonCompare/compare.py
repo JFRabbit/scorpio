@@ -17,6 +17,12 @@ class Comparator(object):
         self.__rule_dict = {}  # type: dict
         self.log = BaseLog(Comparator.__name__).log
 
+    def reset(self):
+        self.is_same = True
+        self.error_msg = ""
+        self.__path = ""
+        self.__rule_dict = {}  # type: dict
+
     def __str__(self):
         if self.is_same:
             return "\nIsSame:\n\t%s" % self.is_same
@@ -53,7 +59,7 @@ class Comparator(object):
             self.__set_error(
                 CompareError(self.__path, RESPONSE_CODE_DIFF, self.__set_error_msg(expect.code, actual.code)))
             return self
-        elif RESPONSE_CODE in self.__rule_dict and self.__rule_dict[RESPONSE_CODE] == Rule.ONLY_CHECK_CODE:
+        elif RESPONSE_CODE in self.__rule_dict and self.__rule_dict[RESPONSE_CODE] == Rule.ONLY_CHECK_CODE.value:
             return self
 
         if isinstance(expect, CompareData):
