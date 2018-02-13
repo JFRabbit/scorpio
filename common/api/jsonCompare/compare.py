@@ -85,13 +85,14 @@ class Comparator(object):
         pass
 
     def __compare_obj(self, key: str, expect: dict, actual: dict, is_check_one):
-        if self.__rule_dict.get(key) == Rule.IGNORE_VALUE or self.__rule_dict.get(key) == Rule.IS_JSON_OBJECT:
+        if self.__rule_dict.get(key) == Rule.IGNORE_VALUE.value or self.__rule_dict.get(
+                key) == Rule.IS_JSON_OBJECT.value:
             return
 
         self.__path += PATH_OBJECT + "[%s]" % key
 
         # 判断Response 的json字段长度
-        if self.__rule_dict.get(key) == Rule.IGNORE_OBJECT_KEY_MISS_MATCH:
+        if self.__rule_dict.get(key) == Rule.IGNORE_OBJECT_KEY_MISS_MATCH.value:
             pass
         else:
             if expect.keys() != actual.keys():
@@ -128,12 +129,14 @@ class Comparator(object):
         pass
 
     def __compare_list(self, key: str, expect: list, actual: list, is_check_one):
-        if self.__rule_dict.get(key) == Rule.IS_JSON_ARRAY or self.__rule_dict.get(key) == Rule.IGNORE_VALUE:
+        if self.__rule_dict.get(key) == Rule.IS_JSON_ARRAY.value \
+                or expect == Rule.IS_JSON_ARRAY.value \
+                or self.__rule_dict.get(key) == Rule.IGNORE_VALUE.value:
             return
 
         # key += PATH_ROOT
 
-        if is_check_one or self.__rule_dict.get(key) == Rule.IGNORE_ARRAY_SIZE:
+        if is_check_one or self.__rule_dict.get(key) == Rule.IGNORE_ARRAY_SIZE.value:
             if len(expect) == 0 or len(actual) == 0:
                 raise Exception("length must > 0 when check one of List")
 
@@ -190,6 +193,9 @@ class Comparator(object):
             if expect == Rule.IS_ANY_BOOL.value and isinstance(actual, bool):
                 return True
 
+            if  expect == Rule.IS_JSON_ARRAY.value and isinstance(actual, list):
+                return True
+
             if expect == Rule.IS_TIMESTEMP.value:
                 try:
                     datetime.datetime.strptime(actual, '%Y-%m-%d %H:%M:%S')
@@ -232,12 +238,12 @@ if __name__ == '__main__':
     print(a_data)
 
     test_comparator = Comparator()
-    test_comparator.set_rule(PATH_ROOT, Rule.IGNORE_OBJECT_KEY_MISS_MATCH)
-    # comparator.set_rule(PATH_ROOT, Rule.IS_JSON_OBJECT)
+    test_comparator.set_rule(PATH_ROOT, Rule.IGNORE_OBJECT_KEY_MISS_MATCH.value)
+    # comparator.set_rule(PATH_ROOT, Rule.IS_JSON_OBJECT.value)
 
-    test_comparator.set_rule("result", Rule.IGNORE_ARRAY_SIZE)
-    test_comparator.set_rule("result" + SUB_OBJ, Rule.IGNORE_OBJECT_KEY_MISS_MATCH)
-    # comparator.set_rule("result", Rule.IS_JSON_ARRAY)
+    test_comparator.set_rule("result", Rule.IGNORE_ARRAY_SIZE.value)
+    test_comparator.set_rule("result" + SUB_OBJ, Rule.IGNORE_OBJECT_KEY_MISS_MATCH.value)
+    # comparator.set_rule("result", Rule.IS_JSON_ARRAY.value)
 
     test_result = test_comparator.compare(e_data, a_data)
     print(test_result)
