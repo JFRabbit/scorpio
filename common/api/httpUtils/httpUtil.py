@@ -51,7 +51,17 @@ def __ignore_urllib3_warning():
     urllib3.disable_warnings()
 
 
-def do_request(items: RequestItems, user_token=None, pwd_token=None):
+__USER_TOKEN = "user_token"
+__PWD_TOKEN = "pwd_token"
+
+
+def do_request(items: RequestItems, **kwargs):
+    """
+    HTTP Request
+    :param items: RequestItems
+    :param kwargs: user_token, pwd_token
+    :return:
+    """
     # 忽略 warning
     if http_variable[IGNORE_WARN]:
         __ignore_urllib3_warning()
@@ -66,10 +76,10 @@ def do_request(items: RequestItems, user_token=None, pwd_token=None):
     # token 认证
     if env_variable[TOKEN]:
         log.info("login by token")
-        if user_token is None or pwd_token is None:
+        if kwargs.get(__USER_TOKEN) is None or kwargs.get(__PWD_TOKEN) is None:
             log.warning("Token must inter user and pwd!")
         else:
-            headers = get_token_headers(user_token, pwd_token)
+            headers = get_token_headers(kwargs.get(__USER_TOKEN), kwargs.get(__PWD_TOKEN))
             session.headers = headers
 
     try:

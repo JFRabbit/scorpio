@@ -7,9 +7,9 @@ class ApiTestBase(object):
         self.log = BaseLog(ApiTestBase.__name__).log
         self.res = None  # type: ResponseItems
 
-    def do_compare(self, request_items: RequestItems, expect_code: int, expect_json, comparator=None):
+    def do_compare(self, request_items: RequestItems, expect_code: int, expect_json, comparator=None, **kwargs):
         self.log.info("\n" + "=" * 100 + "\n" + request_items.__str__())
-        self.res = do_request(request_items)
+        self.res = do_request(request_items, **kwargs)
         self.log.info(self.res)
 
         if isinstance(expect_json, dict):

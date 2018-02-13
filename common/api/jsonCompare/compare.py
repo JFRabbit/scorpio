@@ -193,7 +193,7 @@ class Comparator(object):
             if expect == Rule.IS_ANY_BOOL.value and isinstance(actual, bool):
                 return True
 
-            if  expect == Rule.IS_JSON_ARRAY.value and isinstance(actual, list):
+            if expect == Rule.IS_JSON_ARRAY.value and isinstance(actual, list):
                 return True
 
             if expect == Rule.IS_TIMESTEMP.value:
