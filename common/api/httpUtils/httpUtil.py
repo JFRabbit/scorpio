@@ -27,12 +27,17 @@ class ResponseItems(object):
             self.json = response.json()
         except json.decoder.JSONDecodeError as e:
             self.log.error("json.decoder.JSONDecodeError: %s" % e)
-            self.json = response.text
-            self.log.warning(self.json)
+            self.text = response.text
+            self.log.warning(self.text)
+            self.json = None
 
     def __str__(self):
-        return "ResponseItems: [url:%s, status:%d, json:%s]" % \
-               (self.url, self.status, json_format(self.json))
+        if self.json is not None:
+            return "ResponseItems: [url:%s, status:%d, json:%s]" % \
+                   (self.url, self.status, json_format(self.json))
+        else:
+            return "ResponseItems: [url:%s, status:%d, json:%s]" % \
+                   (self.url, self.status, self.text)
 
 
 def __verify_cas():
@@ -58,6 +63,7 @@ def do_request(items: RequestItems, user_token=None, pwd_token=None):
         log.info("open CAS")
         session = __verify_cas()
 
+    # token 认证
     if env_variable[TOKEN]:
         log.info("login by token")
         if user_token is None or pwd_token is None:
@@ -78,6 +84,11 @@ def do_request(items: RequestItems, user_token=None, pwd_token=None):
                 session.delete(items.url, **items.kwargs)
         }
         response = methods[items.method]
+
+        # 修改response encoding
+        if response.encoding is not "UTF-8":
+            response.encoding = "UTF-8"
+
         res_items = ResponseItems(response)
     finally:
         log.info("Close session%s" % session)
