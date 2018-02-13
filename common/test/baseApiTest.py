@@ -7,13 +7,20 @@ class ApiTestBase(object):
         self.log = BaseLog(ApiTestBase.__name__).log
         self.res = None  # type: ResponseItems
 
-    def do_compare(self, request_items: RequestItems, expect_code: int, expect_json: dict, comparator=None):
+    def do_compare(self, request_items: RequestItems, expect_code: int, expect_json, comparator=None):
         self.log.info("\n" + "=" * 100 + "\n" + request_items.__str__())
         self.res = do_request(request_items)
         self.log.info(self.res)
 
-        expect = CompareData(expect_code, expect_json, True)
-        actual = CompareData(self.res.status, self.res.json, False)
+        if isinstance(expect_json, dict):
+            expect = CompareData(expect_code, expect_json, True)
+            actual = CompareData(self.res.status, self.res.json, False)
+        elif isinstance(expect_json, list):
+            expect = CompareDataList(expect_code, expect_json, True)
+            actual = CompareDataList(self.res.status, self.res.json, False)
+        else:
+            raise Exception()
+
         self.log.info(expect)
         self.log.info(actual)
 
