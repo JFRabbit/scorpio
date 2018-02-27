@@ -1,4 +1,7 @@
 # coding; utf-8
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.wait import WebDriverWait
+
 from common.ui import *
 
 
@@ -44,3 +47,6 @@ class BaseAction(object):
     def chains(self):
         from selenium.webdriver.common.action_chains import ActionChains
         return ActionChains(self.driver)
+
+    def wait_element_visible(self, timeout, *loc):
+        return WebDriverWait(self.driver, timeout).until(ec.visibility_of(self.find_element(*loc)))
