@@ -73,7 +73,8 @@ class UIDriverManager(object):
     def switch_to_window(self, window_name: str):
         self.__current_window.clear()
         self.__current_window[window_name] = self.__windows[window_name]
-        return self.__driver.switch_to_window(self.__windows[window_name])
+        return self.__driver.switch_to.window(self.__windows[window_name])
+        # return self.__driver.switch_to_window(self.__windows[window_name])
 
     def current_window(self):
         return self.__current_window
