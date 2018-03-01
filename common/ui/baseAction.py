@@ -6,16 +6,20 @@ from selenium.webdriver.support.wait import WebDriverWait
 from common.ui import *
 
 
-def check_point(func):
-    def wrapper(*args, **kwargs):
-        result = func(*args, **kwargs)
-        for i in args:
-            if isinstance(i, BaseAction):
-                i.check_log()
-                break
-        return result
+def check_point(is_open=False):
+    def foo(func):
+        def bar(*args, **kwargs):
+            result = func(*args, **kwargs)
+            if is_open:
+                for i in args:
+                    if isinstance(i, BaseAction):
+                        i.check_log()
+                        break
+            return result
 
-    return wrapper
+        return bar
+
+    return foo
 
 
 class BaseAction(object):
@@ -24,7 +28,7 @@ class BaseAction(object):
         self.log = BaseLog(BaseAction.__name__).log
         self.browser_log_ignores = []
 
-    @check_point
+    @check_point(CHECK_BROWSER_LOG)
     def open(self, url):
         self.log.info("open url: %s", url)
         self.driver.get(url)
@@ -41,12 +45,15 @@ class BaseAction(object):
         self.log.info("find elements by: " + str(loc))
         return self.driver.find_elements(*loc)
 
-    @check_point
-    def script(self, src):
+    @check_point(CHECK_BROWSER_LOG)
+    def script(self, src, element=None):
         self.log.info("execute script: %s", src)
-        return self.driver.execute_script(src)
+        if element is None:
+            return self.driver.execute_script(src)
+        else:
+            return self.driver.execute_script(src, element)
 
-    @check_point
+    @check_point(CHECK_BROWSER_LOG)
     def click(self, *loc, sleep=True):
         element = self.find_element(*loc)
         self.log.info("click element: %s", loc)
@@ -54,7 +61,7 @@ class BaseAction(object):
         if sleep:
             self.sleep()
 
-    @check_point
+    @check_point(CHECK_BROWSER_LOG)
     def send_keys(self, *loc, value, click_first=False, clear_first=False):
         if click_first:
             self.find_element(*loc).click()
@@ -73,7 +80,7 @@ class BaseAction(object):
     def wait_element_visible(self, timeout, loc):
         return WebDriverWait(self.driver, timeout).until(ec.visibility_of_element_located(loc))
 
-    @check_point
+    @check_point(CHECK_BROWSER_LOG)
     def get_only_one_visible_element_of_list(self, *loc):
         elements = self.find_elements(*loc)
         if elements.__len__() == 0:
